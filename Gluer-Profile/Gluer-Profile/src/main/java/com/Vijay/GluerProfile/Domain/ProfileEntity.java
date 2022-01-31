@@ -1,15 +1,17 @@
 package com.Vijay.GluerProfile.Domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
+@Document(collection = "profileEntity")
 public class ProfileEntity {
     @Id
     @Column(name = "email",nullable = false)
     private String Email;
+    private String Name;
     private LocalDate DateOfBirth;
     private String Profession;
     private String Gender;
@@ -18,11 +20,14 @@ public class ProfileEntity {
     private Long MobileNumber;
 
 
+
+
     public ProfileEntity() {
     }
 
-    public ProfileEntity(String email, LocalDate dateOfBirth, String profession, String gender, String location, String address, Long mobileNumber) {
+    public ProfileEntity(String email,String name, LocalDate dateOfBirth, String profession, String gender, String location, String address, Long mobileNumber) {
         Email = email;
+        Name=name;
         DateOfBirth = dateOfBirth;
         Profession = profession;
         Gender = gender;
@@ -31,6 +36,14 @@ public class ProfileEntity {
         MobileNumber = mobileNumber;
     }
 
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
 
     public String getEmail() {
         return Email;

@@ -1,14 +1,13 @@
 package com.Vijay.GluerProfile.Service;
 
 import com.Vijay.GluerProfile.Domain.ProfileEntity;
-import com.Vijay.GluerProfile.Domain.User;
-import com.Vijay.GluerProfile.Domain.WrapperObject;
+import com.Vijay.GluerProfile.Domain.UserDetails;
 import com.Vijay.GluerProfile.Repository.ProfileRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class ProfileServiceImpl implements ProfileService{
@@ -22,21 +21,24 @@ public class ProfileServiceImpl implements ProfileService{
 
     @Override
     public String saveProfile(ProfileEntity profileEntity) {
+        UserDetails userDetails=restTemplate.getForObject("http://localhost:8071/gluser/user/"+profileEntity.getEmail(),UserDetails.class);
+        profileEntity.setName(userDetails.getName());
         profileRepo.save(profileEntity);
+
         String result="Profile Updated SuccessFully";
         return result;
     }
 
     @Override
-    public ProfileEntity getProfile(String email) {
-        ProfileEntity byId = profileRepo.findById(email).get();
+    public List<ProfileEntity> getProfile(String email) {
+        List<ProfileEntity> byId = profileRepo.getProfileEntityByEmailorName(email);
         return byId;
     }
 
 
     @Override
     public String updateProfile(String email, ProfileEntity profileEntity) {
-        ProfileEntity profileEntity1 = profileRepo.findById(email).get();
+        ProfileEntity profileEntity1 = profileRepo.getProfileEntityByEmail(email);
         profileEntity1.setMobileNumber(profileEntity.getMobileNumber());
         profileEntity1.setAddress(profileEntity.getAddress());
         profileEntity1.setProfession(profileEntity.getProfession());
@@ -47,12 +49,11 @@ public class ProfileServiceImpl implements ProfileService{
     }
 
     @Override
-    public WrapperObject getUserByProfile(String email) {
-        ProfileEntity profileEntity=profileRepo.findById(email).get();
-        WrapperObject wrapperObject=new WrapperObject();
-        User user=restTemplate.getForObject("http://USER-SERVICE/gluser/user/"+profileEntity.getEmail(),User.class);
-        wrapperObject.setUser(user);
-        wrapperObject.setProfileEntity(profileEntity);
-        return wrapperObject;
+    public List<ProfileEntity> getProfession(String Profession) {
+        List<ProfileEntity> allProfileEntityByProfession = profileRepo.getProfileEntityByProfession(Profession);
+        return allProfileEntityByProfession;
     }
+
+
+
 }
